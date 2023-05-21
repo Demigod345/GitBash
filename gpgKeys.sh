@@ -86,7 +86,7 @@ function display_Existing_Keys(){
       i=$((i+17))
     done
 
-    echo "------------------------------------------------------- "
+    echo "-------------------------------------------------------"
     echo "Your Keys are:
 Index    Key"
     for word in "${keyarr[@]}"; do
@@ -98,7 +98,7 @@ echo ""
 
     echo "Type the index of the GPG key required
 Enter index: "
-    echo "------------------------------------------------------- "
+    echo "-------------------------------------------------------"
 
     read index
 
