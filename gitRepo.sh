@@ -6,17 +6,14 @@ function prettyPrint () {
     echo "-------------------------------------------------------"
 }
 
-function getCredentials(){
-    
+function getCredentials(){    
     touch credentials.env
     chmod 700 credentials.env
 
     prettyPrint "Before we get started!
 We wanna know you a little better"
-
 prettyPrint "Kindly enter your GitHub username: "
     read USERNAME
-
 prettyPrint "Kindly enter your GitHub Personal Access Token: "
     read -s PAT
 
@@ -57,7 +54,14 @@ function createLocalDirectory(){
     git push -u origin main
 }
 
-getCredentials
-getRepoDetails
-createNewRepo
-createLocalDirectory
+function main(){
+    prettyPrint "
+    Welcome to Git Automator
+    "
+    getCredentials
+    getRepoDetails
+    createNewRepo
+    createLocalDirectory
+}
+
+main
