@@ -1,5 +1,7 @@
 #!/usr/bin/bash
 
+storePAT='y'
+
 function prettyPrint () {
     echo "-------------------------------------------------------"
     echo "$1"
@@ -16,9 +18,13 @@ prettyPrint "Kindly enter your GitHub username: "
     read USERNAME
 prettyPrint "Kindly enter your GitHub Personal Access Token: "
     read -s PAT
+prettyPrint "Do you want to store your Personal Access Token in credentials.env file? (y/n)"
+    read storePAT
 
 echo "USERNAME=$USERNAME" > credentials.env
-echo "PAT=$PAT" >> credentials.env
+    if [[ $storePAT == 'y' ]]; then
+        echo "PAT=$PAT" >> credentials.env
+    fi
 }
 
 function getRepoDetails(){
@@ -37,7 +43,6 @@ function createNewRepo(){
 
 function createLocalDirectory(){
     link="git@github.com:$USERNAME/$name.git"
-
     mkdir $name
     cp ./credentials.env ./$name
     cp ./gitRepo.sh ./$name
