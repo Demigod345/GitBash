@@ -12,8 +12,6 @@ function getCredentials(){
     touch credentials.env
     chmod 700 credentials.env
 
-    prettyPrint "Before we get started!
-We wanna know you a little better"
 prettyPrint "Kindly enter your GitHub username: "
     read USERNAME
 prettyPrint "Kindly enter your GitHub Personal Access Token: "
@@ -28,8 +26,20 @@ echo "USERNAME=$USERNAME" > credentials.env
 }
 
 function getRepoDetails(){
+
     prettyPrint "Name of the GitHUb repository: "
     read name
+    prettyPrint "Do you want a private repository? (y/n)"
+    read privateChoice
+
+    if [[ $privateChoice == 'y' ]]; then
+    isPrivate='true'
+    elif [[ $privateChoice == 'n' ]]; then
+    isPrivate='false'
+    else prettyPrint "Something went wrong.
+Kindly re-enter Repository Details."
+    getRepoDetails
+    fi
 }
 
 function createNewRepo(){
@@ -38,7 +48,25 @@ function createNewRepo(){
     -H "Accept: application/vnd.github+json" \
     -H "Authorization: Bearer $PAT" \
     -H "X-GitHub-Api-Version: 2022-11-28" https://api.github.com/user/repos \
-    -d "{\"name\":\"$name\"}"
+    -d "{\"name\":\"$name\", \"private\":$isPrivate }"
+}
+
+function checkValidResponse(){
+	response=$( createNewRepo )
+	if [[ "$response" =~ "\"message\": \"name already exists on this account\"" ]]; then
+    prettyPrint "This repository already exists...
+Kindly enter valid Repository name,
+So that it doesn't match any of the existing repositories."
+	getRepoDetails
+	checkValidResponse	
+
+    elif [[ "$response" =~ "\"message\": \"Bad credentials\"" ]]; then
+    prettyPrint "Invalid Credentials...
+Kindly re-enter the Credentials."
+    getCredentials
+	getRepoDetails
+	checkValidResponse
+	fi
 }
 
 function createLocalDirectory(){
@@ -61,11 +89,13 @@ function createLocalDirectory(){
 
 function main(){
     prettyPrint "
-    Welcome to Git Automator
+            Welcome to Git Automator
     "
+    prettyPrint "Before we get started!
+We wanna know you a little better"
     getCredentials
     getRepoDetails
-    createNewRepo
+    checkValidResponse
     createLocalDirectory
 }
 
